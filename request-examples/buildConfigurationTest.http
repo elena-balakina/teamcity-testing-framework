@@ -1,0 +1,90 @@
+### Constants
+@host = 172.24.208.1
+@port = 8111
+@user = admin
+@password = admin
+
+### Hardcoded test data
+@projectId = projectId_1
+@buildTypeId = buildTypeId_1
+
+### GET all projects
+GET http://{{user}}:{{password}}@{{host}}:{{port}}/app/rest/projects/
+Content-Type: application/json
+Accept: application/json
+
+###
+
+### Step 1: create project
+### Doc: https://www.jetbrains.com/help/teamcity/rest/create-and-delete-projects.html
+# @no-cookie-jar
+POST http://{{user}}:{{password}}@{{host}}:{{port}}/app/rest/projects/
+Content-Type: application/json
+Accept: application/json
+
+{
+    "parentProject": {
+        "locator": "_Root"
+    },
+    "name": "{{projectId}}",
+    "id": "{{projectId}}",
+    "copyAllAssociatedSettings": true
+}
+
+### GET project by name
+GET http://{{user}}:{{password}}@{{host}}:{{port}}/app/rest/projects/{{projectId}}
+Content-Type: application/json
+Accept: application/json
+
+
+### Step 2: create build type
+### Doc: https://www.jetbrains.com/help/teamcity/rest/create-and-delete-build-configurations.html
+# @no-cookie-jar
+POST http://{{user}}:{{password}}@{{host}}:{{port}}/app/rest/buildTypes/
+Content-Type: application/json
+Accept: application/json
+
+{
+  "id": "{{buildTypeId}}",
+  "name": "{{buildTypeId}}",
+  "project": {
+    "id": "{{projectId}}"
+  },
+  "parameters": {
+    "property": [
+      {
+        "name": "myBuildParameter",
+        "value": "myValue"
+      }
+    ]
+  },
+  "steps": {
+    "step": [
+      {
+        "name": "myCommandLineStep",
+        "type": "simpleRunner",
+        "properties": {
+          "property": [
+            {
+              "name": "script.content",
+              "value": "echo 'Hello World!'"
+            }
+          ]
+        }
+      }
+    ]
+  }
+}
+
+### Step 3: run build
+### Doc: https://www.jetbrains.com/help/teamcity/rest/start-and-cancel-builds.html
+# @no-cookie-jar
+POST http://{{user}}:{{password}}@{{host}}:{{port}}/app/rest/buildQueue/
+Content-Type: application/json
+Accept: application/json
+
+{
+  "buildType": {
+    "id": "{{buildTypeId}}"
+  }
+}
