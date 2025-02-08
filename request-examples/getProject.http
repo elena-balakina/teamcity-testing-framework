@@ -1,0 +1,11 @@
+### Constants
+@host = 172.24.208.1
+@port = 8111
+@user = admin
+@password = admin
+
+
+### GET byildType by id
+GET http://{{user}}:{{password}}@{{host}}:{{port}}/app/rest/projects/id:projectId_1
+Content-Type: application/json
+Accept: application/json
