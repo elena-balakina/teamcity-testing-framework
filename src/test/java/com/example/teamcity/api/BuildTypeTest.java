@@ -1,8 +1,9 @@
 package com.example.teamcity.api;
 
+import com.example.teamcity.api.enums.Endpoint;
 import com.example.teamcity.api.models.User;
+import com.example.teamcity.api.requests.checked.CheckedBase;
 import com.example.teamcity.api.spec.Specifications;
-import io.restassured.RestAssured;
 import org.testng.annotations.Test;
 
 import static io.qameta.allure.Allure.step;
@@ -12,23 +13,27 @@ public class BuildTypeTest extends BaseApiTest {
 
     @Test(description = "User should be able to create build type", groups = {"Positive", "CRUD"})
     public void userCanCreateBuildType() {
-        step("Create user");
+        step("Create user", () -> {
+            var user = User.builder()
+                    .username("name")
+                    .password("password")
+                    .build();
+
+            var requester = new CheckedBase<User>(Specifications.superUserAuth(), Endpoint.USERS);
+            requester.create(user);
+        });
+
         step("Create project");
         step("Create build type");
-        step("Check build type was created successfully with cirrect data");
+        step("Check build type was created successfully with currect data");
 
-        User user = User.builder()
-                .user("admin")
-                .password("admin")
-                .build();
-
-        var token = RestAssured
-                .given()
-                .spec(Specifications.getSpec().authSpec(user))
-                .get("authenticationTest.html?cscf")
-                .then()
-                .extract().asString();
-        System.out.printf(token);
+//        var token = RestAssured
+//                .given()
+//                .spec(Specifications.authSpec(user))
+//                .get("authenticationTest.html?cscf")
+//                .then()
+//                .extract().asString();
+//        System.out.printf(token);
     }
 
     @Test(description = "User should not be able to create two build types with the same id", groups = {"Negative", "CRUD"})

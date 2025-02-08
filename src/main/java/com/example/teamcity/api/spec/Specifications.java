@@ -9,41 +9,36 @@ import io.restassured.filter.log.ResponseLoggingFilter;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
 
-import java.util.List;
-
 public class Specifications {
 
-    private static Specifications spec;
-
-    private Specifications() {}
-
-    public static Specifications getSpec() {
-        if (spec == null) {
-            spec = new Specifications();
-        }
-        return spec;
+    private static RequestSpecBuilder reqBuilder() {
+        var requestBuilder = new RequestSpecBuilder();
+        requestBuilder.addFilter(new RequestLoggingFilter());
+        requestBuilder.addFilter(new ResponseLoggingFilter());
+        requestBuilder.setContentType(ContentType.JSON);
+        requestBuilder.setAccept(ContentType.JSON);
+        return requestBuilder;
     }
 
-    private RequestSpecBuilder reqBuilder() {
-        RequestSpecBuilder reqBuilder = new RequestSpecBuilder();
-        reqBuilder.setBaseUri("http://" + Config.getProperty("host") + ":" + Config.getProperty("port"));
-        reqBuilder.setContentType(ContentType.JSON);
-        reqBuilder.setAccept(ContentType.JSON);
-        reqBuilder.addFilters(List.of(new RequestLoggingFilter(), new ResponseLoggingFilter()));
-        return reqBuilder;
+    public static RequestSpecification superUserAuth() {
+        var requestBuilder = reqBuilder();
+        requestBuilder.setBaseUri("http://%s:%s@%s:%s/httpAuth".formatted("", Config.getProperty("superUserToken"), Config.getProperty("host"), Config.getProperty("port")));
+        return requestBuilder.build();
     }
 
-    public RequestSpecification unauthSpec() {
+    public static RequestSpecification unauthSpec() {
         return reqBuilder()
+                .setBaseUri("http://%s:%s".formatted(Config.getProperty("host"), Config.getProperty("port")))
                 .build();
     }
 
-    public RequestSpecification authSpec(User user) {
+    public static RequestSpecification authSpec(User user) {
         BasicAuthScheme basicAuthScheme = new BasicAuthScheme();
-        basicAuthScheme.setUserName(user.getUser());
+        basicAuthScheme.setUserName(user.getUsername());
         basicAuthScheme.setPassword(user.getPassword());
         return reqBuilder()
                 .setAuth(basicAuthScheme)
+                .setBaseUri("http://%s:%s".formatted(Config.getProperty("host"), Config.getProperty("port")))
                 .build();
     }
 }

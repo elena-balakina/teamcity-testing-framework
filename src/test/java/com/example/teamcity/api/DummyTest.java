@@ -26,16 +26,16 @@ public class DummyTest extends BaseApiTest {
     public void unauthTest() {
         RestAssured
                 .given()
-                .spec(Specifications.getSpec().unauthSpec())
+                .spec(Specifications.unauthSpec())
                 .get("/app/rest/projects/");
     }
 
     @Test
     public void authTest() {
-        User user = User.builder().user("admin").password("admin").build();
+        User user = User.builder().username("admin").password("admin").build();
         RestAssured
                 .given()
-                .spec(Specifications.getSpec().authSpec(user))
+                .spec(Specifications.authSpec(user))
                 .get("/app/rest/projects/");
     }
 
