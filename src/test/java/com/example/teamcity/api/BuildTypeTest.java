@@ -97,6 +97,25 @@ public class BuildTypeTest extends BaseApiTest {
         softy.assertEquals(createdBuildType.getName(), buildType.getName(), "Build type name is not correct");
     }
 
+    @Test(description = "(with Facade and TestData) User should be able to create build type", groups = {"Positive", "CRUD"})
+    public void withTestDataUserCanCreateBuildType() {
+        // тестовые данные генерируются в BaseTest
+
+        // создаем юзера и реквестер для созданного юзера
+        superUserCheckedRequests.getRequest(USERS).create(testData.getUser());
+        var userCheckedRequests = new CheckedRequests(Specifications.authSpec(testData.getUser()));
+
+        // создаем проект
+        userCheckedRequests.<Project>getRequest(PROJECTS).create(testData.getProject());
+
+        // создаем build type
+        userCheckedRequests.getRequest(BUILD_TYPES).create(testData.getBuildType());
+
+        // получаем созданный build type по id
+        var createdBuildType = userCheckedRequests.<BuildType>getRequest(BUILD_TYPES).read(testData.getBuildType().getId());
+        softy.assertEquals(createdBuildType.getName(), testData.getBuildType().getName(), "Build type name is not correct");
+    }
+
     @Test(description = "User should not be able to create two build types with the same id", groups = {"Negative", "CRUD"})
     public void userCanNotCreateTwoBuildTypesWithTheSameId() {
         // создаем юзера
@@ -123,6 +142,34 @@ public class BuildTypeTest extends BaseApiTest {
                 .create(buildType2)
                 .then().assertThat().statusCode(HttpStatus.SC_BAD_REQUEST)
                 .body(Matchers.containsString("The build configuration / template ID \"%s\" is already used by another configuration or template".formatted(buildType1.getId())));
+    }
+
+    @Test(description = "(with Test Data) User should not be able to create two build types with the same id", groups = {"Negative", "CRUD"})
+    public void withTestDataUserCanNotCreateTwoBuildTypesWithTheSameId() {
+        // тестовые данные генерируются в BaseTest
+
+        // создаем юзера и реквестер для созданного юзера
+        superUserCheckedRequests.getRequest(USERS).create(testData.getUser());
+        var userCheckedRequests = new CheckedRequests(Specifications.authSpec(testData.getUser()));
+
+        // создаем проект
+        userCheckedRequests.<Project>getRequest(PROJECTS).create(testData.getProject());
+
+        // собираем buildTypeWithSameId с id из сгенерированного в начале теста buildType1
+        var buildTypeWithSameId = BuildType.builder()
+                .id(testData.getBuildType().getId())
+                .name(RandomData.getString())
+                .project(testData.getProject())
+                .build();
+
+        // создаем buildType1
+        userCheckedRequests.getRequest(BUILD_TYPES).create(testData.getBuildType());
+
+        // пытаемся создать buildTypeWithSameId
+        new UncheckedBase(Specifications.authSpec(testData.getUser()), BUILD_TYPES)
+                .create(buildTypeWithSameId)
+                .then().assertThat().statusCode(HttpStatus.SC_BAD_REQUEST)
+                .body(Matchers.containsString("The build configuration / template ID \"%s\" is already used by another configuration or template".formatted(testData.getBuildType().getId())));
     }
 
     @Test(description = "Project admin should be able to create build type for their project", groups = {"Positive", "Roles"})
