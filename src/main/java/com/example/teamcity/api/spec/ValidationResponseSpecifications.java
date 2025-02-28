@@ -28,6 +28,30 @@ public class ValidationResponseSpecifications {
         return responseSpecBuilder.build();
     }
 
+    public static ResponseSpecification checkProjectIdWithNonLetterCharacter(String projectId) {
+        ResponseSpecBuilder responseSpecBuilder = new ResponseSpecBuilder();
+        responseSpecBuilder.expectStatusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+        responseSpecBuilder.expectBody(Matchers.containsString(("Project ID \"%s\" is invalid: starts with non-letter character '%s'. ID should start with a latin letter " +
+                "and contain only latin letters, digits and underscores (at most 225 characters).").formatted(projectId, projectId.charAt(0))));
+        return responseSpecBuilder.build();
+    }
+
+    public static ResponseSpecification checkProjectIdWithNonLatinCharacter(String projectId) {
+        ResponseSpecBuilder responseSpecBuilder = new ResponseSpecBuilder();
+        responseSpecBuilder.expectStatusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+        responseSpecBuilder.expectBody(Matchers.containsString(("Project ID \"%s\" is invalid: contains non-latin letter '%s'. ID should start with a latin letter " +
+                "and contain only latin letters, digits and underscores (at most 225 characters).").formatted(projectId, projectId.charAt(0))));
+        return responseSpecBuilder.build();
+    }
+
+    public static ResponseSpecification checkProjectIdTooLong(String projectId) {
+        ResponseSpecBuilder responseSpecBuilder = new ResponseSpecBuilder();
+        responseSpecBuilder.expectStatusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+        responseSpecBuilder.expectBody(Matchers.containsString(("Project ID \"%s\" is invalid: it is %s characters long while the maximum length is 225. " +
+                "ID should start with a latin letter and contain only latin letters, digits and underscores (at most 225 characters).").formatted(projectId, projectId.length())));
+        return responseSpecBuilder.build();
+    }
+
     public static ResponseSpecification checkUserCanNotCreateProject() {
         ResponseSpecBuilder responseSpecBuilder = new ResponseSpecBuilder();
         responseSpecBuilder.expectStatusCode(HttpStatus.SC_FORBIDDEN);

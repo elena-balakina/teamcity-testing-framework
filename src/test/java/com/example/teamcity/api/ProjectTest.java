@@ -5,8 +5,6 @@ import com.example.teamcity.api.requests.CheckedRequests;
 import com.example.teamcity.api.requests.unchecked.UncheckedBase;
 import com.example.teamcity.api.spec.Specifications;
 import com.example.teamcity.api.spec.ValidationResponseSpecifications;
-import org.apache.http.HttpStatus;
-import org.hamcrest.Matchers;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -38,9 +36,7 @@ public class ProjectTest extends BaseApiTest {
 
     @DataProvider(name = "ValidProjectIds")
     public static Object[] validProjectIds() {
-        return new Object[]{"t", "rrrrrrrrr", "gdgdfh56757jhfgjh",
-                "tyuiouyrtytrtyuytrertyuiouyrtytrtyuytrertyuiouyrtytrtyuytrertyuiouyrtytrtyuytrertyuiouyrtytrtyuytrertyuiouyrtytrtyuytrer" +
-                        "tyuiouyrtytrtyuytrertyuiouyrtytrtyuytrertyuiouyrtytrtyuytrertyuiouyrtytrtyuytrertyuiouyrtytrtyuytrerrtyui"};
+        return new Object[]{"t", "rrrrrrrrr", "gdgdfh56757jhfgjh", "qwertyuiopi".repeat(10)};
     }
 
     @Test(dataProvider = "ValidProjectIds", description = "Project with valid id can be created by Super user", groups = {"Positive", "CRUD"})
@@ -151,9 +147,7 @@ public class ProjectTest extends BaseApiTest {
         projectWithInvalidId.setId(invalidId);
         new UncheckedBase(Specifications.superUserSpec(), PROJECTS)
                 .create(projectWithInvalidId)
-                .then().statusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR)
-                .body(Matchers.containsString(("Project ID \"%s\" is invalid: starts with non-letter character '%s'. ID should start with a latin letter " +
-                        "and contain only latin letters, digits and underscores (at most 225 characters).").formatted(invalidId, invalidId.charAt(0))));
+                .then().spec(ValidationResponseSpecifications.checkProjectIdWithNonLetterCharacter(invalidId));
     }
 
     @Test(description = "Project with non-latin id can not be created by Super user", groups = {"Negative", "CRUD"})
@@ -163,23 +157,17 @@ public class ProjectTest extends BaseApiTest {
         projectWithInvalidId.setId(projectId);
         new UncheckedBase(Specifications.superUserSpec(), PROJECTS)
                 .create(projectWithInvalidId)
-                .then().statusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR)
-                .body(Matchers.containsString(("Project ID \"%s\" is invalid: contains non-latin letter '%s'. ID should start with a latin letter " +
-                        "and contain only latin letters, digits and underscores (at most 225 characters).").formatted(projectId, projectId.charAt(0))));
+                .then().spec(ValidationResponseSpecifications.checkProjectIdWithNonLatinCharacter(projectId));
     }
 
     @Test(description = "Project with id > 225 symbols can not be created by Super user", groups = {"Negative", "CRUD"})
     public void superuserCanNotCreateProjectIdMoreThan225Symbols() {
-        String projectId = "ererteferttererrerereererteferttererrerereererteferttererrerereererteferttererrerereererteferttererrerereererteferttererrerere" +
-                "ererteferttererrerereererteferttererrerereererteferttererrerereererteferttererrerereererteferttererrerereererteferttererrerere" +
-                "ererteferttererrerereererteferttererrer";
+        String projectId = "qwertyuiopp".repeat(25);
         var projectWithInvalidId = generate(Project.class);
         projectWithInvalidId.setId(projectId);
         new UncheckedBase(Specifications.superUserSpec(), PROJECTS)
                 .create(projectWithInvalidId)
-                .then().statusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR)
-                .body(Matchers.containsString(("Project ID \"%s\" is invalid: it is 291 characters long while the maximum length is 225. " +
-                        "ID should start with a latin letter and contain only latin letters, digits and underscores (at most 225 characters).").formatted(projectId)));
+                .then().spec(ValidationResponseSpecifications.checkProjectIdTooLong(projectId));
     }
 
     @Test(description = "Project with empty id and name can not be created by Super user", groups = {"Negative", "CRUD"})
@@ -189,8 +177,7 @@ public class ProjectTest extends BaseApiTest {
         projectWithEmptyIdAndName.setName("");
         new UncheckedBase(Specifications.superUserSpec(), PROJECTS)
                 .create(projectWithEmptyIdAndName)
-                .then().statusCode(HttpStatus.SC_BAD_REQUEST)
-                .body(Matchers.containsString(("Project name cannot be empty.")));
+                .then().spec(ValidationResponseSpecifications.checkProjectWithEmptyName());
     }
 
     @Test(description = "Project with invalid id and empty name can not be created by Super user", groups = {"Negative", "CRUD"})
@@ -200,8 +187,7 @@ public class ProjectTest extends BaseApiTest {
         projectWithInvalidIdAndEmptyName.setName("");
         new UncheckedBase(Specifications.superUserSpec(), PROJECTS)
                 .create(projectWithInvalidIdAndEmptyName)
-                .then().statusCode(HttpStatus.SC_BAD_REQUEST)
-                .body(Matchers.containsString(("Project name cannot be empty.")));
+                .then().spec(ValidationResponseSpecifications.checkProjectWithEmptyName());
     }
 
     @Test(description = "User should not be able to create a copy of non existing project", groups = {"Negative", "Copy"})
