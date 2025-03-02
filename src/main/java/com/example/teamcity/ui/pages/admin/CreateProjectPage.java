@@ -4,9 +4,6 @@ import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import com.example.teamcity.ui.pages.ProjectsPage;
 
-import java.time.Duration;
-
-import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
 
 public class CreateProjectPage extends CreateBasePage {
@@ -25,7 +22,6 @@ public class CreateProjectPage extends CreateBasePage {
     }
 
     public ProjectsPage setupProject(String projectName, String buildTypeName) {
-        projectNameInput.shouldBe(visible, Duration.ofSeconds(10));
         projectNameInput.val(projectName);
         buildTypeNameInput.val(buildTypeName);
         submitButton.click();
