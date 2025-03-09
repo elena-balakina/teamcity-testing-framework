@@ -5,15 +5,17 @@ import com.example.teamcity.api.enums.Endpoint;
 import com.example.teamcity.api.models.BuildType;
 import com.example.teamcity.api.models.Project;
 import com.example.teamcity.api.requests.CheckedRequests;
+import com.example.teamcity.api.requests.unchecked.UncheckedBase;
 import com.example.teamcity.api.spec.Specifications;
+import com.example.teamcity.api.spec.ValidationResponseSpecifications;
 import com.example.teamcity.ui.pages.BuildTypePage;
 import com.example.teamcity.ui.pages.ProjectPage;
 import com.example.teamcity.ui.pages.admin.CreateBuildTypePage;
 import lombok.val;
 import org.testng.annotations.Test;
 
+import static com.example.teamcity.api.enums.Endpoint.BUILD_TYPES;
 import static com.example.teamcity.api.enums.Endpoint.PROJECTS;
-import static io.qameta.allure.Allure.step;
 
 public class CreateBuildTypeTest extends BaseUiTest {
 
@@ -30,8 +32,8 @@ public class CreateBuildTypeTest extends BaseUiTest {
 
         // Create build type via UI
         CreateBuildTypePage.open(createdProject.getId())
-                        .createForm(REPO_URL)
-                        .submitBuildType();
+                .createForm(REPO_URL)
+                .submitBuildType();
 
         // проверка состояния API (корректность отправки данных с UI на API)
         // Получаем buildType по projectId
@@ -59,25 +61,24 @@ public class CreateBuildTypeTest extends BaseUiTest {
         softy.assertTrue(buildTypeExists);
     }
 
-    @Test(description = "User should not be able to create build type without name", groups = {"Negative", "Regression"})
+    @Test(description = "User should not be able to create build type with empty Repo URL", groups = {"Negative", "Regression"})
     public void userCreatesBuildTypeWithoutName() {
         // подготовка окружения
-        step("Login as user");
-        step("Check number of projects");
+        loginAs(testData.getUser());
 
-        // взаимодействие с UI
-        step("Open `Create Project Page` (http://localhost:8111/admin/createObjectMenu.html)");
-        step("Send all project parameters (repository URL)");
-        step("Click `Proceed`");
-        step("Set Project Name value is empty");
-        step("Click `Proceed`");
+        // Create project via API
+        var userCheckedRequests = new CheckedRequests(Specifications.authSpec(testData.getUser()));
+        var createdProject = userCheckedRequests.<Project>getRequest(PROJECTS).create(testData.getProject());
 
-        // проверка состояния API
-        // (корректность отправки данных с UI на API)
-        step("Check that number of projects did not change");
+        // Create build type via UI + Проверить сообщение об ошибке на UI
+        val errorText = CreateBuildTypePage.open(createdProject.getId())
+                .submitBuildTypeUnvalidated()
+                .getRepoUrlValidationErrorText();
+        softy.assertEquals(errorText, "URL must not be empty");
 
-        // проверка состояния UI
-        // (корректность считывания данных и отображение данных на UI)
-        step("Check that error appears `Project name must not be empty`");
+        // Запрашиваем buildType по projectId и проверяем, что ответ 404 и текст ошибки
+        new UncheckedBase(Specifications.authSpec(testData.getUser()), BUILD_TYPES)
+                .read("project:" + createdProject.getId())
+                .then().spec(ValidationResponseSpecifications.checkNoBuildTypeFound(createdProject.getId()));
     }
 }
