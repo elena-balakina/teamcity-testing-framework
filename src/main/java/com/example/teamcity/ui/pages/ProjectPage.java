@@ -11,8 +11,11 @@ public class ProjectPage extends BasePage {
 
     public static SelenideElement title = $("span[class*='ProjectPageHeader']");
 
+    // ElementCollection -> List<ProjectElement>
+    // UI elements -> List<Object>
+    // ElementCollection -> List<BasePageElement>
+
     public static ProjectPage open(String projectId) {
         return Selenide.open(PROJECT_URL.formatted(projectId), ProjectPage.class);
     }
-
 }
