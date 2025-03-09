@@ -1,12 +1,15 @@
 ### Constants
 @host = 172.25.80.1
 @port = 8111
-@user = admin
-@password = admin
+#@user = admin
+#@password = admin
+
+@user =
+@password = 3728725202684760859
 
 
 ### GET project by id
-GET http://{{user}}:{{password}}@{{host}}:{{port}}/app/rest/projects/id:projectId_1
+GET http://{{user}}:{{password}}@{{host}}:{{port}}/app/rest/projects/id:TestKcJYyzHhSe
 Content-Type: application/json
 Accept: application/json
 
