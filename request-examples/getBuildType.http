@@ -1,11 +1,23 @@
 ### Constants
-@host = 172.24.208.1
+@host = 172.25.80.1
 @port = 8111
-@user = admin
-@password = admin
+#@user = admin
+#@password = admin
 
+@user =
+@password = 3728725202684760859
+
+### GET byildTypes for the project
+GET http://{{user}}:{{password}}@{{host}}:{{port}}/app/rest/buildTypes/project:TestKcJYyzHhSe
+Content-Type: application/json
+Accept: application/json
 
 ### GET byildType by id
-GET http://{{user}}:{{password}}@{{host}}:{{port}}/app/rest/buildTypes/id:buildTypeId_1
+GET http://{{user}}:{{password}}@{{host}}:{{port}}/app/rest/buildTypes/id:TestKcJYyzHhSe_Build
+Content-Type: application/json
+Accept: application/json
+
+### GET byildType by projectId
+GET http://{{user}}:{{password}}@{{host}}:{{port}}/app/rest/buildTypes/project:TestKcJYyzHhSe
 Content-Type: application/json
 Accept: application/json
