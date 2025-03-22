@@ -2,6 +2,7 @@ package com.example.teamcity.ui.pages;
 
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
+import io.qameta.allure.Step;
 
 import static com.codeborne.selenide.Selenide.$;
 
@@ -11,6 +12,7 @@ public class BuildTypePage extends BasePage {
 
     public static SelenideElement title = $("h1[class*='BuildTypePageHeader']>span");
 
+    @Step("Open BuildType page")
     public static BuildTypePage open(String projectId) {
         return Selenide.open(BUILD_TYPE_URL.formatted(projectId), BuildTypePage.class);
     }
