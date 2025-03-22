@@ -23,6 +23,7 @@ public class CreateProjectPage extends CreateBasePage {
         return this;
     }
 
+    // Stabilize UI test
     public void setupProject(String projectName, String buildTypeName) {
         projectNameInput.val(projectName);
         buildTypeNameInput.val(buildTypeName);
