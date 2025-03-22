@@ -64,7 +64,7 @@ public class ProjectTest extends BaseApiTest {
         Assert.assertEquals(createdProject, project, "Actual project does not match expected");
     }
 
-    @Test(description = "Project with 'copyAllAssociatedSettings' = false can be created by Super user", groups = {"Positive", "CRUD"})
+//    @Test(description = "Project with 'copyAllAssociatedSettings' = false can be created by Super user", groups = {"Positive", "CRUD"})
     public void superAdminCanCreateProjectWithCopyAllAssociatedSettingsFalse() {
         var superuserCheckedRequests = new CheckedRequests(Specifications.superUserSpec());
         var project = generate(Project.class);

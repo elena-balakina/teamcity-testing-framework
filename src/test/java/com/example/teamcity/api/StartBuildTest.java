@@ -22,7 +22,7 @@ public class StartBuildTest extends BaseApiTest {
         WireMock.setupServer(post("/app/rest/fake"), HttpStatus.SC_OK, fakeObject);
     }
 
-    @Test(description = "User should be able to start build (with WireMock)", groups = {"Regression"})
+    @Test(description = "User should be able to start build (with WireMock)", groups = {"Mock"})
     public void userStartsBuildWithWireMockTest() {
         var checkedBuildQueueRequest = new CheckedBase<FakeObject>(Specifications.mockSpec(), Endpoint.FAKE_OBJECT);
         var fake = checkedBuildQueueRequest.create(FakeObject.builder().build());
