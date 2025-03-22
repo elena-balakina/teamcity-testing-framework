@@ -22,13 +22,13 @@ public class Specifications {
 
     public static RequestSpecification superUserSpec() {
         var requestBuilder = reqBuilder();
-        requestBuilder.setBaseUri("http://%s:%s@%s:%s/httpAuth".formatted("", Config.getProperty("superUserToken"), Config.getProperty("host"), Config.getProperty("port")));
+        requestBuilder.setBaseUri("http://%s:%s@%s/httpAuth".formatted("", Config.getProperty("superUserToken"), Config.getProperty("host")));
         return requestBuilder.build();
     }
 
     public static RequestSpecification unauthSpec() {
         return reqBuilder()
-                .setBaseUri("http://%s:%s".formatted(Config.getProperty("host"), Config.getProperty("port")))
+                .setBaseUri("http://%s".formatted(Config.getProperty("host")))
                 .build();
     }
 
@@ -38,7 +38,7 @@ public class Specifications {
         basicAuthScheme.setPassword(user.getPassword());
         return reqBuilder()
                 .setAuth(basicAuthScheme)
-                .setBaseUri("http://%s:%s".formatted(Config.getProperty("host"), Config.getProperty("port")))
+                .setBaseUri("http://%s".formatted(Config.getProperty("host")))
                 .build();
     }
 

@@ -17,7 +17,7 @@ public class BaseUiTest extends BaseTest {
     @BeforeSuite(alwaysRun = true)
     public void setupUiTest() {
         Configuration.browser = Config.getProperty("browser");
-        Configuration.baseUrl = "http://" + Config.getProperty("host") + ":" + Config.getProperty("port");
+        Configuration.baseUrl = "http://" + Config.getProperty("host");
         // НЕ ПИШИТЕ UI ТЕСТЫ С ЛОКАЛЬНЫМ БРАУЗЕРОМ, СРАЗУ ЗАПУСКАЙТЕ НА REMOTE BROWSER для отладки
         Configuration.remote = Config.getProperty("remote");
         Configuration.browserSize = Config.getProperty("browserSize");
