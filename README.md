@@ -5,3 +5,4 @@ API tests:
 
 UI tests:
 ![image](https://github.com/user-attachments/assets/471a3e14-a083-4ac9-b0ed-6075c1d9c485)
+![img.png](img.png)
