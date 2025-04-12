@@ -7,7 +7,7 @@ jobs:
   backend:
     uses: ./.github/workflows/backend-stage.yml
 
-  # Собирается бекенд и деплоится на стейдж/review app
+  # Собирается фронтенд и деплоится на стейдж/review app
   frontend:
     uses: ./.github/workflows/frontend-stage.yml
 
