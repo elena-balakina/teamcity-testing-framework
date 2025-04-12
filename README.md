@@ -1,8 +1,9 @@
 # 📦 TeamCity API and UI Tests
 
 [![Build Status](https://github.com/elena-balakina/Restful-booker-lombok/actions/workflows/run-tests.yml/badge.svg)](https://github.com/elena-balakina/teamcity-testing-framework/actions)
-[![Allure Report API](https://img.shields.io/badge/Allure-Report-blueviolet?logo=allure&style=flat-square)](https://elena-balakina.github.io/teamcity-testing-framework/api/)
-[![Allure Report UI](https://img.shields.io/badge/Allure-Report-blueviolet?logo=allure&style=flat-square)](https://elena-balakina.github.io/teamcity-testing-framework/ui/)
+[![Allure API Report](https://img.shields.io/badge/Allure_API-Report-blueviolet?logo=allure&style=flat-square)](https://elena-balakina.github.io/teamcity-testing-framework/api/)
+[![Allure UI Report](https://img.shields.io/badge/Allure_UI-Report-blue?logo=allure&style=flat-square)](https://elena-balakina.github.io/teamcity-testing-framework/ui/)
+
 
 ---
 
