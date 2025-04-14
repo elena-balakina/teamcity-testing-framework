@@ -65,12 +65,14 @@ jobs:
           ref: gh-pages
           path: gh-pages
 
+      # Для генерации отчету у Allure есть готовые actions, используем их
       - name: Build test report
         uses: simple-elf/allure-report-action@v1.7
         if: always()
         with:
           gh_pages: gh-pages
           allure_history: allure-history
+          # настраивается в allure.properties
           allure_results: target/allure-results
           subfolder: ${{ inputs.package }}
 
